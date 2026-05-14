@@ -1,12 +1,7 @@
-# ─────────────────────────────────────────────
-#  modules/pc_controller.py
-#  Contrôle souris, volume et scroll via gestes
-# ─────────────────────────────────────────────
-
 import time
 import numpy as np
 
-# ── Imports optionnels (Windows) ─────────────
+
 
 try:
     import pyautogui
@@ -47,26 +42,26 @@ class PCController:
         else:
             self.sw = self.sh = 1080
 
-        # État souris (lissage)
+    
         self._mx = float(self.sw // 2)
         self._my = float(self.sh // 2)
 
-        # Cooldowns
+     
         self._last_click  = 0.0
         self._last_scroll = 0.0
         self._last_scroll_y: float | None = None
 
-        # Volume courant (0-100)
+        
         self._volume = 50
 
-    # ── Souris ────────────────────────────────
+
 
     def move_mouse(self, index_tip: tuple) -> None:
         """Déplace la souris vers la position du bout de l'index."""
         if not PYAUTOGUI_OK:
             return
 
-        # Normalisation avec marges ignorées
+       
         m   = MOUSE_MARGIN
         nx  = (index_tip[0] / self.fw - m) / (1 - 2 * m)
         ny  = (index_tip[1] / self.fh - m) / (1 - 2 * m)
@@ -76,7 +71,6 @@ class PCController:
         tx  = nx * self.sw
         ty  = ny * self.sh
 
-        # Lissage exponentiel
         a       = MOUSE_SMOOTH
         self._mx = a * tx + (1 - a) * self._mx
         self._my = a * ty + (1 - a) * self._my
@@ -102,7 +96,7 @@ class PCController:
             return True
         return False
 
-    # ── Volume ────────────────────────────────
+  
 
     def set_volume_from_pinch(self, thumb_tip: tuple, index_tip: tuple) -> int:
         """
@@ -127,7 +121,6 @@ class PCController:
     def get_volume(self) -> int:
         return self._volume
 
-    # ── Scroll ────────────────────────────────
 
     def scroll(self, index_tip_y: float) -> int:
         """
@@ -158,7 +151,7 @@ class PCController:
     def reset_scroll(self) -> None:
         self._last_scroll_y = None
 
-    # ── Raccourcis clavier ────────────────────
+
 
     @staticmethod
     def press_key(key: str) -> None:
