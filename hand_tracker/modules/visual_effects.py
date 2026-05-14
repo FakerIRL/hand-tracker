@@ -1,4 +1,4 @@
-# modules/visual_effects.py  –  Rendu simplifié
+
 
 import cv2
 import numpy as np
@@ -13,13 +13,13 @@ def draw_hand_skeleton(frame: np.ndarray, hand_data: dict, color: tuple) -> None
     """Dessine les os et articulations de la main (style simple)."""
     pts = hand_data["points"]
 
-    # Lignes entre les articulations
+   
     for chain in SKELETON_CHAINS:
         for i in range(len(chain) - 1):
             cv2.line(frame, pts[chain[i]][:2], pts[chain[i+1]][:2],
                      color, 2, cv2.LINE_AA)
 
-    # Points sur chaque articulation
+   
     tips = set(FINGER_TIP_IDS.values())
     for idx, pt in enumerate(pts):
         taille = 7 if idx in tips else 4
@@ -57,7 +57,7 @@ def draw_corner_bracket(frame, x, y, w, h, color, size=20, thickness=2):
         cv2.line(frame, (x+dx, y+dy), (x+dx,    y+dy+sy), color, thickness, cv2.LINE_AA)
 
 
-# Stubs vides pour compatibilité avec main.py
+
 class Trail:
     def update(self, *a): pass
     def draw(self, *a):   pass
