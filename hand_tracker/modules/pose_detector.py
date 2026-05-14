@@ -1,4 +1,4 @@
-# modules/pose_detector.py  –  Corps complet multi-personnes v2
+
 
 import cv2, numpy as np, mediapipe as mp, urllib.request, os, time
 
@@ -10,7 +10,7 @@ POSE_MODEL_URL  = (
 
 MAX_PERSONNES = 4
 
-# Connexions squelette complet
+
 CONNEXIONS = [
     # Visage
     (0,1),(1,2),(2,3),(3,7),(0,4),(4,5),(5,6),(6,8),(9,10),
@@ -64,7 +64,7 @@ class PoseDetector:
             min_tracking_confidence=0.45,
         )
         self._lm = mp.tasks.vision.PoseLandmarker.create_from_options(opts)
-        # Lissage par entité : {idx: [pts_lissés]}
+      
         self._smooth: dict[int, list] = {}
         self._alpha = 0.30
 
@@ -84,7 +84,7 @@ class PoseDetector:
         for idx, lms in enumerate(res.pose_landmarks):
             raw = [(lm.x * w, lm.y * h, lm.z, lm.visibility) for lm in lms]
 
-            # Lissage exponentiel
+          
             if idx not in self._smooth:
                 self._smooth[idx] = raw
             else:
@@ -128,7 +128,7 @@ class PoseDetector:
         return (max(0,min(xs)-pad), max(0,min(ys)-pad),
                 min(w,max(xs)+pad), min(h,max(ys)+pad))
 
-    # ── Dessin ────────────────────────────────
+
 
     @staticmethod
     def draw(frame: np.ndarray, pose: dict, flou_tete: bool = False) -> None:
@@ -137,7 +137,7 @@ class PoseDetector:
         couleur = pose["couleur"]
         idx     = pose["idx"]
 
-        # ── Squelette ─────────────────────────
+    
         for a, b in CONNEXIONS:
             if a >= len(pts) or b >= len(pts):
                 continue
@@ -146,14 +146,14 @@ class PoseDetector:
             cv2.line(frame, pts[a][:2], pts[b][:2],
                      couleur, 2, cv2.LINE_AA)
 
-        # ── Points articulaires ───────────────
+    
         for i, pt in enumerate(pts):
             if i >= len(vis) or vis[i] < 0.35:
                 continue
             r = 4 if i in MEMBRES_LABELS else 3
             cv2.circle(frame, pt[:2], r, couleur, -1, cv2.LINE_AA)
 
-        # ── Labels membres ────────────────────
+     
         for mid, label in MEMBRES_LABELS.items():
             if mid >= len(pts) or vis[mid] < 0.45:
                 continue
@@ -161,7 +161,7 @@ class PoseDetector:
             offset_x = -80 if "G" in label else 12
             _lbl(frame, label, (px + offset_x, py), couleur, 0.36)
 
-        # ── Tête ──────────────────────────────
+       
         PoseDetector._draw_tete(frame, pose, couleur, flou_tete)
 
     @staticmethod
@@ -175,16 +175,15 @@ class PoseDetector:
         cx = (x1 + x2) // 2
         cy = (y1 + y2) // 2
 
-        # Ellipse bien proportionnée autour de la tête
-        # Ratio largeur/hauteur naturel ~0.75
+      
         rx = max(12, (x2 - x1) // 2)
         ry = max(16, int(rx * 1.30))
 
-        # Ellipse principale
+        
         cv2.ellipse(frame, (cx, cy), (rx, ry),
                     0, 0, 360, couleur, 2, cv2.LINE_AA)
 
-        # Ellipse intérieure (halo léger)
+    
         alpha_halo = np.zeros_like(frame)
         cv2.ellipse(alpha_halo, (cx, cy), (rx-3, ry-3),
                     0, 0, 360, couleur, 1, cv2.LINE_AA)
@@ -208,7 +207,7 @@ class PoseDetector:
                     cv2.FONT_HERSHEY_SIMPLEX, 0.62,
                     couleur, 2, cv2.LINE_AA)
 
-        # Flou visage
+       
         if flou_tete:
             PoseDetector._appliquer_flou(frame, (cx-rx, cy-ry, cx+rx, cy+ry), w, h)
 
