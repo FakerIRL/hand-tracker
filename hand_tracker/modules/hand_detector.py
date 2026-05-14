@@ -1,8 +1,3 @@
-# ─────────────────────────────────────────────
-#  modules/hand_detector.py
-#  Compatible mediapipe >= 0.10.30 (Tasks API)
-# ─────────────────────────────────────────────
-
 import cv2
 import numpy as np
 import mediapipe as mp
