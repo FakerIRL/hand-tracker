@@ -1,13 +1,10 @@
-# modules/image_overlay.py
-# Affiche une image en overlay sur la caméra avec fondu
-
 import cv2
 import numpy as np
 import os
 import time
 
-CHEMIN_DEFAUT = "photo.png"   # Place ton image ici avec ce nom
-FONDU_DUREE   = 0.4           # secondes pour l'apparition / disparition
+CHEMIN_DEFAUT = "photo.png"   
+FONDU_DUREE   = 0.4          
 
 
 class ImageOverlay:
@@ -18,7 +15,7 @@ class ImageOverlay:
         self._actif  = False        # True = doit être visible
         self._t_last = time.time()
 
-    # ── API publique ──────────────────────────
+ 
 
     def activer(self):
         self._actif = True
@@ -53,7 +50,6 @@ class ImageOverlay:
         self._chemin = chemin
         self._img    = self._charger(chemin)
 
-    # ── Privé ─────────────────────────────────
 
     def _charger(self, chemin: str):
         if not os.path.exists(chemin):
@@ -82,7 +78,7 @@ class ImageOverlay:
 
         roi    = frame[y:y+ih, x:x+iw]
 
-        # Gestion transparence (canal alpha si PNG)
+   
         if img_r.shape[2] == 4:
             alpha_masque = (img_r[:,:,3] / 255.0) * self._alpha
             img_rgb      = img_r[:,:,:3]
@@ -95,7 +91,7 @@ class ImageOverlay:
                           + img_rgb[:,:,c] * alpha_masque).astype(np.uint8)
         frame[y:y+ih, x:x+iw] = roi
 
-        # Bordure blanche autour
+       
         ep = max(0, int(2 * self._alpha))
         if ep > 0:
             cv2.rectangle(frame, (x-ep, y-ep), (x+iw+ep, y+ih+ep),
